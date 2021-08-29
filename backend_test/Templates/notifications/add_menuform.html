@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <form method="post">
+        {% csrf_token %}
+        {% for option in options %}
+            <div class='row' style="align-items:center;">
+                <span class="mr-2">{{option.description}}</span><input type='radio' name='{{option.description}}' value='{{option.id}}'>
+            </div>
+        {% endfor %}
+        <input class="pr-5 mr-2 mt-5" type="submit" value="Save">
+    </form>
+</div>
+{% endblock %}

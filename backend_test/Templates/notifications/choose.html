@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+{% block contentLogin %}
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Wellcome {{username}}  !!! </a>
+    <a class="navbar-brand"></a>
+</nav>
+
+<div>
+    <div class="container mt-5 "  >
+        <h4>Hello! </h1>
+        <h4>I share with you today's menu :) </h1>
+        <form style="display:flex; flex-direction:column;align-items:center" class="mt-5" action="{% url 'notifications:see_menu' pk %}" method="post">
+            {% csrf_token %}
+            {% for menu in menus %}
+                <div class='row' style="align-items:center;">
+                    <span class="mr-2">{{menu.description}}</span><input type='radio' name='response' value='{{menu.id}}'>
+                </div>
+            {% endfor %}
+            <div class="form-group mt-5">
+                <label for="personalization">Write your comments below</label>
+                <textarea class="form-control" id="personalization" rows="3" name='personalization'></textarea>
+              </div>
+              <h4>Have a nice day!</h4>
+            <button class="btn btn-primary mt-5"  type="submit">Guardar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

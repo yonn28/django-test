@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <ul class="nav">
+        <li class="nav-item">
+            <a type="button" class="nav-link" href = "{% url 'notifications:create_option' %}"> + option</a>
+        </li>
+        <li>
+            <a type="button" class="nav-link" href = "{% url 'notifications:create_menu' %}"> + menu</a>
+        </li>
+    </ul>
+    <h4 class="ml-3 mt-5">menus and their options</h4>
+    <div class="mt-5 container">
+        <form method="post" action="">
+            {% csrf_token %}
+            {% for menu in menus %}
+                <div class='row'>
+                    {% for i in menu.options.all %} <span>{{i.description}}</span> {% endfor %}
+                    <input type='radio'  class="form-control col-sm" name='response' value='{{menu.id}}'>
+                </div>
+            {% endfor %}
+            <button class="btn btn-primary mt-5"  type="submit">Send notifications</button>
+        </form>
+    </div>
+    </div>
+{% endblock %}
