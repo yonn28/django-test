@@ -57,8 +57,8 @@ class WatchMenu(View):
         ''' this is for get the context for menu display and selection, before the 11AM colombian timezone, you must be logged out for work !!!'''
         pk = self.kwargs.get('pk',0)
         hour_actual = timezone.localtime(timezone.now()).hour
-        # if hour_actual > 11:
-        #     return render(request,'notifications/not_valid_hour.html',context={})
+        if hour_actual > 11:
+            return render(request,'notifications/not_valid_hour.html',context={})
         name = Notification.objects.filter(id=pk).values_list('user__username',flat=True)[0]
         menus_ids = Notification.objects.filter(id=pk).values_list('menu__options',flat=True)
         menus = Option.objects.filter(id__in=list(menus_ids))
