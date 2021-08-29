@@ -67,6 +67,7 @@ make up
 
 ```
 python manage.py shell 
+```
 
 and execute the following commands, please take into account to have register a user with username nora:
 
