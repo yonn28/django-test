@@ -62,3 +62,19 @@ Edit `.docker/Dockerfile_base` and replace 1337 by your user id.
 make rebuild
 make up
 ```
+
+7 - for adding the user permissions use django shell 
+
+```
+python manage.py shell 
+
+and execute the following commands, please take into account to have register a user with username nora:
+
+```
+from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
+
+u1 = User.objects.get(username = 'nora')
+perm = Permission.objects.get(codename='can_send_notifications') 
+u1.user_permissions.add(perm)
+```
