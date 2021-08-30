@@ -11,6 +11,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse, reverse_lazy
 import urllib3
 import json
+from backend_test.tasks import send_slack_notifications
 
 PERMISSIONS_REQUIRED = 'notifications.can_send_notifications'
 
@@ -23,22 +24,7 @@ class CreateNotification(PermissionRequiredMixin, LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         '''this is for notify all the users the link for select the meal'''
         menus = Menu.objects.all()
-        menu_selected = Menu.objects.get(id=request.POST.get("response"))
-        http = urllib3.PoolManager()
-        for person in User.objects.all():
-            n1 = Notification(user=person,menu=menu_selected)
-            n1.save()
-            current_site = get_current_site(request)
-            url_to_send = 'http://%s%s%s' % (current_site.domain, '/menu/', n1.id)
-            data = {"text": url_to_send}
-            encoded_data = json.dumps(data).encode("utf-8")
-            http.request(
-                "POST",
-                "https://hooks.slack.com/services/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",
-                body = encoded_data, 
-                headers ={"Content-Type": "application/json"}
-            )
-            print(url_to_send)
+        send_slack_notifications(request.POST.get("response"), get_current_site(request))
         return render(request,'notifications/create_notification.html',context={'menus':menus})
 
 
@@ -69,8 +55,8 @@ class WatchMenu(View):
         ''' this is for get the context for menu display and selection, before the 11AM colombian timezone, you must be logged out for work !!!'''
         pk = self.kwargs.get('pk',0)
         hour_actual = timezone.localtime(timezone.now()).hour
-        # if hour_actual > 11:
-        #     return render(request,'notifications/not_valid_hour.html',context={})
+        if hour_actual > 11:
+            return render(request,'notifications/not_valid_hour.html',context={})
         name = Notification.objects.filter(id=pk).values_list('user__username',flat=True)[0]
         menus_ids = Notification.objects.filter(id=pk).values_list('menu__options',flat=True)
         menus = Option.objects.filter(id__in=list(menus_ids))
